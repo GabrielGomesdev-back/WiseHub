@@ -8,4 +8,6 @@ import com.hub.wisehub.data.entity.Usuario;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     
+    Usuario findUsuarioByLogin(String login);
+
 }

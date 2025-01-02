@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 @RestController
@@ -33,7 +34,10 @@ public class CrudController {
 
     @Autowired private CrudService crudService;
    
-    @Operation(summary = "Pesquisar *todos* usuários cadastrados")
+    @Operation(
+        summary = "Pesquisar *todos* usuários cadastrados",         
+        security = @SecurityRequirement(name = "bearerAuth")    
+    )
     @ApiResponses(value = { 
     @ApiResponse(responseCode = "200", description = "Retorna os usuários que foram encontrados", 
         content = { @Content(mediaType = "application/json", 
@@ -44,7 +48,10 @@ public class CrudController {
         return crudService.pesquisarUsuarios();
     }
 
-    @Operation(summary = "Pesquisar um usuário pelo Id")
+    @Operation(
+        summary = "Pesquisar um usuário pelo Id",         
+        security = @SecurityRequirement(name = "bearerAuth")    
+    )
     @ApiResponses(value = { 
     @ApiResponse(responseCode = "200", description = "Encontrou o usuário", 
         content = { @Content(mediaType = "application/json", 
@@ -72,7 +79,10 @@ public class CrudController {
         return  crudService.criarUsuario(json);
     }
 
-    @Operation(summary = "Atualizar um usuário")
+    @Operation(
+        summary = "Atualizar um usuário",         
+        security = @SecurityRequirement(name = "bearerAuth")    
+    )
     @ApiResponses(value = { 
     @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso !", 
         content = { @Content(mediaType = "application/json", 
@@ -86,7 +96,10 @@ public class CrudController {
         return  crudService.atualizarUsuario(json);
     }
 
-    @Operation(summary = "Deletar um usuário existente")
+    @Operation(
+        summary = "Deletar um usuário existente",         
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
     @ApiResponses(value = { 
     @ApiResponse(responseCode = "200", description = "Usuário Deletado com sucesso !", 
         content = { @Content(mediaType = "application/json", 

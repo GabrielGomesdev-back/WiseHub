@@ -1,5 +1,6 @@
 package com.hub.wisehub.feature.FT001;
 
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.BeanUtils;
@@ -29,21 +30,31 @@ public class CrudService {
     public ResponseEntity<ObjectNode> criarUsuario(CriarUsuarioDTO json) {
         try {
             Usuario usuario = this.preencherUsuario(json);
-            usuario = usuarioRepository.save(usuario);
-            mailService.enviarEmailCriacaoUsuario(usuario.getEmail(), "Criação de conta na wiseHub", "Olá Hooper, "+usuario.getNome()+" Seja bem vindo(a) aos serviços WiseHub agora que sua conta foi criada você pode ter acesso as informações sobre o seu time e seu jogador favorito da NBA sempre que quiser !!!\n");
-            return ResponseEntity.status(HttpStatus.CREATED).body(utilsService.responseSucesso());
+            if(usuario != null){
+                usuario = usuarioRepository.save(usuario);
+                mailService.enviarEmailCriacaoUsuario(usuario.getEmail(), "Criação de conta na wiseHub", "Olá Hooper, "+usuario.getLogin()+" Seja bem vindo(a) aos serviços WiseHub agora que sua conta foi criada você pode ter acesso as informações sobre o seu time e seu jogador favorito da NBA sempre que quiser !!!\n");
+                return ResponseEntity.status(HttpStatus.CREATED).body(utilsService.responseSucesso());
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(utilsService.response("O usuário não pode ser cadastrado já existe um usuário com o mesmo login"));   
+            }
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(utilsService.response("O usuário não pode ser cadastrado por favor verifique as informações de requisição"));
         }
     }
 
     protected Usuario preencherUsuario(CriarUsuarioDTO json){
-        Usuario usuario = new Usuario();
-        usuario.setEmail(json.getEmail());
-        usuario.setNome(json.getNome());
-        usuario.setJogador(json.getJogador());
-        usuario.setTime(json.getTime());
-        return usuario;
+        Usuario usuario = null;
+        usuario = usuarioRepository.findUsuarioByLogin(json.getLogin());
+        if(usuario == null){
+            usuario = new Usuario();
+            usuario.setEmail(json.getEmail());
+            usuario.setLogin(json.getLogin());
+            usuario.setSenha(Base64.getEncoder().encodeToString(json.getSenha().getBytes()));
+            usuario.setJogador(json.getJogador());
+            usuario.setTime(json.getTime());
+            return usuario;
+        }
+        return null;
     }
 
     public ResponseEntity<ObjectNode> atualizarUsuario(AtualizarUsuarioDTO json) {
@@ -51,7 +62,7 @@ public class CrudService {
             Usuario usuario = usuarioRepository.findById(json.getId()).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
             BeanUtils.copyProperties(json, usuario);
             usuario = usuarioRepository.save(usuario);
-            mailService.enviarEmailCriacaoUsuario(usuario.getEmail(), "Atualização de conta na wiseHub", "Olá Hooper, "+usuario.getNome()+" Sua conta na WiseHub foi atualizada com sucessoo !!");
+            mailService.enviarEmailCriacaoUsuario(usuario.getEmail(), "Atualização de conta na wiseHub", "Olá Hooper, "+usuario.getLogin()+" Sua conta na WiseHub foi atualizada com sucessoo !!");
             return ResponseEntity.status(HttpStatus.OK).body(utilsService.responseSucesso());
         } catch (IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(utilsService.response("Usuário não encontrado"));
@@ -79,7 +90,7 @@ public class CrudService {
     public ResponseEntity<ObjectNode> deleteUser(Long id) {
         try {
             Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-            mailService.enviarEmailCriacaoUsuario(usuario.getEmail(), "Exclusão de conta na wiseHub", "Olá Hooper, "+usuario.getNome()+" É triste saber que um Hooper como você se aposentou sua conta da WiseHub, espero que nas próximas seasons nós possamos nos ver novamente !!");
+            mailService.enviarEmailCriacaoUsuario(usuario.getEmail(), "Exclusão de conta na wiseHub", "Olá Hooper, "+usuario.getLogin()+" É triste saber que um Hooper como você se aposentou sua conta da WiseHub, espero que nas próximas seasons nós possamos nos ver novamente !!");
             usuarioRepository.deleteById(id);
             return  ResponseEntity.status(HttpStatus.OK).body(utilsService.responseSucesso()); 
         } catch(Exception e) { 

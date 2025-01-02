@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/v1/FT003/nba")
@@ -23,7 +24,10 @@ public class TerceirosController {
 
     @Autowired TerceirosService terceirosService;
 
-    @Operation(summary = "Consutar a escalação e status dos jogadores de times da NBA na temporada atual")
+    @Operation(
+        summary = "Consutar a escalação e status dos jogadores de times da NBA na temporada atual",         
+        security = @SecurityRequirement(name = "bearerAuth")    
+    )
     @ApiResponses(value = { 
     @ApiResponse(responseCode = "200", description = "Encontrou informações sobre o time !", 
         content = { @Content(mediaType = "application/json", 

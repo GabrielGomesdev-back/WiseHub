@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 @RestController
@@ -22,7 +23,10 @@ public class EmailController {
 
     @Autowired private EmailService emailService;
  
-    @Operation(summary = "Endpoint responsável por enviar um email")
+    @Operation(
+        summary = "Endpoint responsável por enviar um email",         
+        security = @SecurityRequirement(name = "bearerAuth")    
+    )
     @ApiResponses(value = { 
     @ApiResponse(responseCode = "200", description = "Email enviado com sucesso !", 
         content = @Content),
