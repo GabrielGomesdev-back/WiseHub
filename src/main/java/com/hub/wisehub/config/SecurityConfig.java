@@ -24,22 +24,19 @@ public class SecurityConfig  extends WebSecurityConfiguration{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()  // Desabilita CSRF (não necessário para JWT)
+            .csrf().disable()  // CSRF não necessário para JWT
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .headers()
-                    .frameOptions().sameOrigin()  // Configura como sem estado (stateless) para JWT
+                    .frameOptions().sameOrigin()
             .and()
             .authorizeRequests()
             .requestMatchers(
                 "/auth/login",
-                "/h2-console/**", 
-                "/auth/register", 
-                "/swagger-ui/**",  // Permite o acesso ao Swagger UI
-                "/v3/api-docs/**", // Permite o acesso à documentação do Swagger
-                "/swagger-resources/**", // Permite o acesso aos recursos do Swagger
-                "/webjars/**", 
+                "/swagger-ui/**",  
+                "/v3/api-docs/**", 
+                "/swagger-resources/**",
                 "/api/v1/FT001/usuarios/criar").permitAll()  // Permite o acesso sem autenticação para login e registro
             .anyRequest().authenticated()  // Requer autenticação para outras rotas
             .and()

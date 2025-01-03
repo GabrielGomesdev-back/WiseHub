@@ -13,6 +13,13 @@ import com.hub.wisehub.config.JwtUtil;
 import com.hub.wisehub.data.dto.UserLoginRequestDTO;
 import com.hub.wisehub.feature.UtilsService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 public class AuthController {
     
@@ -23,6 +30,17 @@ public class AuthController {
     public AuthController(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
+
+    @Operation(
+        summary = "Gerar um token para um usuário previamente cadastrado"    
+    )
+    @ApiResponses(value = { 
+    @ApiResponse(responseCode = "200", description = "Token foi gerado com sucesso com base nas informações do usuário", 
+        content = { @Content(mediaType = "application/json", 
+        schema = @Schema(implementation = ObjectNode.class)) }),
+    @ApiResponse(responseCode = "400", description = "O usuário não foi encontrado por isso o token não foi gerado.", 
+        content = @Content)
+    })
 
     @PostMapping("/auth/login")
     public ResponseEntity<ObjectNode> login(@RequestBody UserLoginRequestDTO loginRequest) {
